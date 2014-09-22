@@ -4,6 +4,7 @@
 using System;
 using LeagueSharp;
 using LeagueSharp.Common;
+using System.Threading;
 
 
 namespace AutoLevelup
@@ -15,6 +16,7 @@ namespace AutoLevelup
         public static string tipo = "";
         private static SpellSlot Smite;
         public static Obj_AI_Base Player = ObjectManager.Player; // Instead of typing ObjectManager.Player you can just type Player
+
         static void Main(string[] args)
         {
             CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
@@ -22,7 +24,16 @@ namespace AutoLevelup
 
         static void Game_OnGameLoad(EventArgs args)
         {
+            Thread t = new Thread(new ThreadStart(livellini));
+            t.Start();
             AutoLevelupUpdater.InitializeAutoLevelup();
+            Game.OnGameUpdate += Game_OnGameUpdate;
+            Game.PrintChat("<font color='#C80046'>Changelog:Azir-The Emperor of the Sands, Added</font>");
+
+        }
+        public static void livellini()
+        {
+            Thread.Sleep(100);
             Smite = ObjectManager.Player.GetSpellSlot("SummonerSmite");
             if (Player.BaseSkinName == "Aatrox") abilitySequence = new int[] { 2, 1, 3, 2, 2, 4, 2, 3, 2, 3, 4, 3, 3, 1, 1, 4, 1, 1 };
             else if (Player.BaseSkinName == "Ahri") abilitySequence = new int[] { 1, 2, 3, 1, 1, 4, 1, 2, 1, 2, 4, 2, 2, 3, 3, 4, 3, 3 };
@@ -35,19 +46,16 @@ namespace AutoLevelup
             else if (Player.BaseSkinName == "Azir") abilitySequence = new int[] { 2, 1, 3, 2, 2, 4, 2, 1, 2, 1, 4, 1, 1, 3, 3, 4, 3, 3 };
             else if (Player.BaseSkinName == "Blitzcrank")
             {
-                if (Player.PercentMagicDamageMod > Player.PercentPhysicalDamageMod)
+                if (Player.FlatMagicDamageMod > Player.FlatPhysicalDamageMod)
                 {
                     abilitySequence = new int[] { 1, 2, 3, 1, 1, 4, 1, 2, 1, 2, 4, 2, 2, 3, 3, 4, 3, 3 };
                     tipo = " AP";
                 }
-
                 else
                 {
                     abilitySequence = new int[] { 1, 2, 3, 1, 1, 4, 1, 3, 1, 3, 4, 3, 3, 2, 2, 4, 2, 2 };
                     tipo = " AD";
-
                 }
-
             }
             else if (Player.BaseSkinName == "Brand") abilitySequence = new int[] { 2, 1, 3, 2, 2, 4, 2, 3, 2, 3, 4, 3, 3, 1, 1, 4, 1, 1 };
             else if (Player.BaseSkinName == "Braum") abilitySequence = new int[] { 1, 3, 2, 1, 1, 4, 1, 3, 1, 3, 4, 3, 3, 2, 2, 4, 2, 2 };
@@ -56,7 +64,7 @@ namespace AutoLevelup
             else if (Player.BaseSkinName == "Chogath") abilitySequence = new int[] { 1, 3, 2, 1, 1, 4, 1, 3, 1, 3, 4, 3, 3, 2, 2, 4, 2, 2 };
             else if (Player.BaseSkinName == "Corki")
             {
-                if (Player.PercentMagicDamageMod > Player.PercentPhysicalDamageMod)
+                if (Player.FlatMagicDamageMod > Player.FlatPhysicalDamageMod)
                 {
                     abilitySequence = new int[] { 1, 2, 3, 1, 1, 4, 1, 2, 1, 2, 4, 2, 2, 3, 3, 4, 3, 3 };
                     tipo = " AP";
@@ -89,7 +97,19 @@ namespace AutoLevelup
             else if (Player.BaseSkinName == "Ezreal") abilitySequence = new int[] { 1, 3, 2, 1, 1, 4, 1, 3, 1, 3, 4, 3, 3, 2, 2, 4, 2, 2 };
             else if (Player.BaseSkinName == "FiddleSticks") abilitySequence = new int[] { 2, 3, 1, 2, 2, 4, 2, 1, 2, 1, 4, 1, 1, 3, 3, 4, 3, 3 };
             else if (Player.BaseSkinName == "Fiora") abilitySequence = new int[] { 2, 1, 3, 2, 2, 4, 2, 3, 2, 3, 4, 3, 3, 1, 1, 4, 1, 1 };
-            else if (Player.BaseSkinName == "Fizz") abilitySequence = new int[] { 1, 3, 2, 3, 3, 4, 3, 1, 3, 1, 4, 1, 1, 2, 2, 4, 2, 2 };
+            else if (Player.BaseSkinName == "Fizz")
+                 {
+                if (Player.FlatMagicDamageMod > Player.FlatPhysicalDamageMod)
+                {
+                    abilitySequence = new int[] { 1, 3, 2, 3, 3, 4, 3, 1, 3, 1, 4, 1, 1, 2, 2, 4, 2, 2 };
+                    tipo = " AP";
+                }
+                else
+                {
+                    abilitySequence = new int[] { 2, 1, 3, 2, 2, 4, 2, 1, 2, 1, 4, 1, 1, 3, 3, 4, 3, 3 };
+                    tipo = " AD";
+                }
+            }
             else if (Player.BaseSkinName == "Galio") abilitySequence = new int[] { 1, 3, 2, 1, 1, 4, 1, 3, 1, 3, 4, 3, 3, 2, 2, 4, 2, 2 };
             else if (Player.BaseSkinName == "Gangplank") abilitySequence = new int[] { 1, 3, 2, 1, 1, 4, 1, 3, 1, 3, 4, 3, 3, 2, 2, 4, 2, 2 };
             else if (Player.BaseSkinName == "Garen") abilitySequence = new int[] { 3, 1, 2, 3, 3, 4, 3, 1, 3, 1, 4, 1, 1, 2, 2, 4, 2, 2 };
@@ -254,7 +274,7 @@ namespace AutoLevelup
             else if (Player.BaseSkinName == "Sejuani") abilitySequence = new int[] { 2, 3, 1, 2, 2, 4, 2, 1, 2, 3, 4, 3, 3, 3, 1, 4, 1, 1 };
             else if (Player.BaseSkinName == "Shaco")
             {
-                if (Player.PercentMagicDamageMod > Player.PercentPhysicalDamageMod)
+                if (Player.FlatMagicDamageMod > Player.FlatPhysicalDamageMod)
                 {
                     abilitySequence = new int[] { 2, 1, 3, 2, 2, 4, 2, 3, 2, 3, 4, 3, 3, 1, 1, 4, 1, 1 };
                     tipo = " AP";
@@ -270,7 +290,7 @@ namespace AutoLevelup
             else if (Player.BaseSkinName == "Singed") abilitySequence = new int[] { 1, 3, 1, 3, 1, 4, 1, 2, 1, 2, 4, 3, 2, 3, 2, 4, 2, 3 };
             else if (Player.BaseSkinName == "Sion")
             {
-                if (Player.PercentMagicDamageMod > Player.PercentPhysicalDamageMod)
+                if (Player.FlatMagicDamageMod > Player.FlatPhysicalDamageMod)
                 {
                     abilitySequence = new int[] { 2, 1, 3, 2, 2, 4, 2, 1, 2, 1, 4, 1, 1, 3, 3, 4, 3, 3 };
                     tipo = " AP";
@@ -389,12 +409,8 @@ namespace AutoLevelup
             else if (Player.BaseSkinName == "Ziggs") abilitySequence = new int[] { 1, 3, 2, 1, 1, 4, 1, 3, 1, 3, 4, 3, 3, 2, 2, 4, 2, 2 };
             else if (Player.BaseSkinName == "Zilean") abilitySequence = new int[] { 1, 2, 3, 1, 1, 4, 1, 3, 1, 3, 4, 3, 3, 2, 2, 4, 2, 2 };
             else if (Player.BaseSkinName == "Zyra") abilitySequence = new int[] { 3, 2, 1, 3, 1, 4, 3, 1, 3, 1, 4, 3, 1, 2, 2, 4, 2, 2 };
-
-            Game.OnGameUpdate += Game_OnGameUpdate;
-            Game.PrintChat("<font color='#C80046'>Changelog:Azir, the Emperor of the Sands Added</font>");
             Game.PrintChat(Player.BaseSkinName + tipo + " loaded");
         }
-
         static void Game_OnGameUpdate(EventArgs args)
         { //AutoLevelup
             int qL = Player.Spellbook.GetSpell(SpellSlot.Q).Level + qOff;
@@ -412,7 +428,6 @@ namespace AutoLevelup
                 if (wL < level[1]) ObjectManager.Player.Spellbook.LevelUpSpell(SpellSlot.W);
                 if (eL < level[2]) ObjectManager.Player.Spellbook.LevelUpSpell(SpellSlot.E);
                 if (rL < level[3]) ObjectManager.Player.Spellbook.LevelUpSpell(SpellSlot.R);
-
             }
         }
     }
